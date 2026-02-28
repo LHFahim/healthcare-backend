@@ -12,3 +12,57 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+
+model UserEntity {
+  id        String   @id @default(uuid())
+  
+
+  password               String
+  passwordChangeRequired Boolean @default(false)
+
+  email     String
+  fullName  String?
+  firstName String?
+  lastName  String?
+  avatar    String?
+
+  city     String?
+  postCode String?
+  address  String?
+
+  phoneNumber          String?
+  secondaryPhoneNumber String?
+
+  authProvider      AuthProvider
+  authPanel         AuthPanel
+
+  emailVerified     Boolean      @default(false)
+
+  gdprEnabled Boolean? @default(false)
+
+  lastLoggedAt DateTime?
+  lastActiveAt DateTime?
+
+  isActive  Boolean @default(true)
+  isDeleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+
+enum AuthPanel {
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
+
+enum AuthProvider {
+  EMAIL
+  GOOGLE
+  FACEBOOK
+  APPLE
+}
