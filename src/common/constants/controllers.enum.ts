@@ -1,4 +1,4 @@
 export enum ControllersEnum {
-  USER = 'user',
   AUTH = 'auth',
+  USER = 'user',
 }

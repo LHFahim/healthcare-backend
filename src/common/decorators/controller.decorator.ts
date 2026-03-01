@@ -1,10 +1,10 @@
-import { applyDecorators, Controller } from '@nestjs/common';
+import { applyDecorators, Controller, SetMetadata } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Serialize } from 'libs/utils/serialize.decorator';
 // import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 // import { RoleGuard } from '../../auth/guards/role.guard';
-import { APIVersions } from '../enums/api-version.enum';
-import { ControllersEnum } from '../enums/controllers.enum';
+import { APIVersions } from '../constants/api-version.enum';
+import { ControllersEnum } from '../constants/controllers.enum';
 
 export const ApiController = (
   path: ControllersEnum,
@@ -26,3 +26,6 @@ export const ApiControllerWithoutAuth = (
   version: APIVersions = APIVersions.V1,
 ) =>
   applyDecorators(Serialize(), ApiTags(apiTag), Controller({ path, version }));
+
+export const IS_PUBLIC_KEY = 'isPublic';
+export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);

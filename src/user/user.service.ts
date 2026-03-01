@@ -4,8 +4,8 @@ import { ConfigService } from 'src/config/config.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class UsersService implements OnModuleInit {
-  private readonly logger = new Logger(UsersService.name);
+export class UserService implements OnModuleInit {
+  private readonly logger = new Logger(UserService.name);
 
   constructor(
     private prisma: PrismaService,
@@ -47,7 +47,21 @@ export class UsersService implements OnModuleInit {
 
   async findAllUsers() {
     const users = await this.prisma.userEntity.findMany();
-    console.log('🚀 ~ UsersService ~ findAllUsers ~ users:', users);
+    console.log(this.configService.JWT_SECRET);
     return users;
+  }
+
+  async findOneForAuth(username: string) {
+    const user = await this.prisma.userEntity.findFirst({
+      where: { email: username },
+    });
+    return user;
+  }
+
+  async findUserById(id: string) {
+    const user = await this.prisma.userEntity.findUnique({
+      where: { id: id },
+    });
+    return user;
   }
 }

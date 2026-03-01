@@ -22,7 +22,6 @@ export class ConfigService {
 
   @IsDefined()
   @IsString()
-  // @MinLength(20)
   JWT_SECRET: string;
 
   @IsDefined()

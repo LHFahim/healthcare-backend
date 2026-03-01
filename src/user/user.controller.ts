@@ -1,11 +1,11 @@
 import { Get } from '@nestjs/common';
+import { ControllersEnum } from 'src/common/constants/controllers.enum';
 import { ApiControllerWithoutAuth } from 'src/common/decorators/controller.decorator';
-import { ControllersEnum } from 'src/common/enums/controllers.enum';
-import { UsersService } from './user.service';
+import { UserService } from './user.service';
 
 @ApiControllerWithoutAuth(ControllersEnum.USER, 'User')
 export class UserController {
-  constructor(private readonly userService: UsersService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get()
   findAllUsers() {
