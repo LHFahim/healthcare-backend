@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { IsDefined, IsInt, IsString, Min, validateSync } from 'class-validator';
+import {
+  IsDefined,
+  IsEmail,
+  IsInt,
+  IsString,
+  Min,
+  validateSync,
+} from 'class-validator';
 
 @Injectable()
 export class ConfigService {
@@ -25,6 +32,14 @@ export class ConfigService {
   @IsDefined()
   @IsString()
   JWT_REFRESH_TOKEN_EXPIRES_IN: string;
+
+  @IsDefined()
+  @IsEmail()
+  SUPER_ADMIN_EMAIL: string;
+
+  @IsDefined()
+  @IsString()
+  SUPER_ADMIN_PASSWORD: string;
 
   // @IsDefined()
   // @IsEmail()
