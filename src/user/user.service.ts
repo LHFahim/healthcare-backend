@@ -44,4 +44,10 @@ export class UsersService implements OnModuleInit {
 
     console.log(`Super admin created with email: ${email}`);
   }
+
+  async findAllUsers() {
+    const users = await this.prisma.userEntity.findMany();
+    console.log('🚀 ~ UsersService ~ findAllUsers ~ users:', users);
+    return users;
+  }
 }
