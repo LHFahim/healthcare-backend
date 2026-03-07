@@ -45,7 +45,7 @@ export class UserService implements OnModuleInit {
     console.log(`Super admin created with email: ${email}`);
   }
 
-  async findAllUsers() {
+  async findAll() {
     const users = await this.prisma.userEntity.findMany();
     console.log(this.configService.JWT_SECRET);
     return users;
@@ -61,6 +61,13 @@ export class UserService implements OnModuleInit {
   async findUserById(id: string) {
     const user = await this.prisma.userEntity.findUnique({
       where: { id: id },
+    });
+    return user;
+  }
+
+  async findMyProfile(userId: string) {
+    const user = await this.prisma.userEntity.findUnique({
+      where: { id: userId },
     });
     return user;
   }

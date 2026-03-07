@@ -28,22 +28,16 @@ export class AuthService {
 
   async signIn(dto: LoginDto): Promise<any> {
     const user = await this.usersService.findOneForAuth(dto.email);
-    if (!user) throw new UnauthorizedException();
+    if (!user) throw new UnauthorizedException('Invalid email or password');
 
     const { password, ...result } = user;
-    if (password !== dto.password) throw new UnauthorizedException();
+    if (password !== dto.password)
+      throw new UnauthorizedException('Invalid email or password');
 
     const payload = { sub: user.id, username: user.email };
     const access_token = this.jwtService.sign(payload);
     return {
       access_token,
     };
-  }
-
-  async findMyProfile(userId: string) {
-    const user = await this.usersService.findUserById(userId);
-    if (!user) throw new UnauthorizedException();
-    const { password, ...result } = user;
-    return result;
   }
 }

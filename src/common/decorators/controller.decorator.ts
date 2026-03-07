@@ -1,4 +1,10 @@
-import { applyDecorators, Controller, SetMetadata } from '@nestjs/common';
+import {
+  applyDecorators,
+  Controller,
+  createParamDecorator,
+  ExecutionContext,
+  SetMetadata,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Serialize } from 'libs/utils/serialize.decorator';
 // import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -29,3 +35,8 @@ export const ApiControllerWithoutAuth = (
 
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
+
+export const UserId = createParamDecorator((_, ctx: ExecutionContext) => {
+  const request = ctx.switchToHttp().getRequest();
+  return request.user?.id ?? request.user?.userId;
+});

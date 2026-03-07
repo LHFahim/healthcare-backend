@@ -5,13 +5,13 @@ export const Routes = {
     login: 'login/email',
     registerByEmail: 'register/email',
     refreshJwtToken: 'refresh-token',
-    profile: 'profile',
     logout: 'logout',
   },
-  [ControllersEnum.USER]: {
+  [ControllersEnum.USERS]: {
     findAll: '',
     findOne: ':id',
     updateOne: ':id',
     deleteOne: ':id',
+    profile: 'profile',
   },
 } as const;

@@ -31,10 +31,12 @@ async function bootstrap() {
     .setTitle('Healthcare backend')
     .setDescription('Healthcare backend API description')
     .addBearerAuth({
-      description: 'JWT Token',
+      description: 'Enter JWT Token',
       type: 'http',
+      scheme: 'bearer',
       name: 'Authorization',
       bearerFormat: 'JWT',
+      in: 'header',
     })
     .setVersion('1.0')
     .addTag('Healthcare backend')
