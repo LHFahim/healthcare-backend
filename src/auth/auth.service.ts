@@ -1,14 +1,60 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleInit,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { AuthPanel, AuthProvider } from 'generated/prisma/enums';
+import { ConfigService } from 'src/config/config.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { LoginDto } from './dto/auth.dto';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements OnModuleInit {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private usersService: UserService,
     private jwtService: JwtService,
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
   ) {}
+
+  async onModuleInit() {
+    const user = await this.prisma.userEntity.findFirst({
+      where: {
+        authPanel: AuthPanel.SUPER_ADMIN,
+      },
+    });
+    if (user) {
+      this.logger.log(`Super admin already exists: ${user.email}`);
+      return;
+    }
+
+    const email = this.configService.SUPER_ADMIN_EMAIL;
+    const password = this.configService.SUPER_ADMIN_PASSWORD;
+
+    if (!email || !password) {
+      this.logger.warn(
+        'No super admin found. Set SUPER_ADMIN_EMAIL and SUPER_ADMIN_PASSWORD to create one automatically.',
+      );
+      return;
+    }
+
+    await this.prisma.userEntity.create({
+      data: {
+        email,
+        password,
+        authPanel: AuthPanel.SUPER_ADMIN,
+        authProvider: AuthProvider.EMAIL,
+      },
+    });
+
+    console.log(`Super admin created with email: ${email}`);
+  }
 
   async validateUser(dto: LoginDto): Promise<any> {
     const user = await this.usersService.findOneForAuth(dto.email);
@@ -39,5 +85,10 @@ export class AuthService {
     return {
       access_token,
     };
+  }
+
+  public async getHashedPassword(password: string) {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
   }
 }
