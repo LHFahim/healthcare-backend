@@ -1,33 +1,17 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from 'src/config/config.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UserProfileDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
-  private readonly logger = new Logger(UserService.name);
-  private readonly userPublicFields = {
-    email: true,
-    fullName: true,
-    firstName: true,
-    lastName: true,
-    avatar: true,
-    city: true,
-    postCode: true,
-    address: true,
-    phoneNumber: true,
-    secondaryPhoneNumber: true,
-  } as const;
-
   constructor(
     private prisma: PrismaService,
     private readonly configService: ConfigService,
   ) {}
 
   async findAll() {
-    const users = await this.prisma.userEntity.findMany({
-      select: this.userPublicFields,
-    });
-    console.log(this.configService.JWT_SECRET);
+    const users = await this.prisma.userEntity.findMany({});
     return users;
   }
 
@@ -45,11 +29,24 @@ export class UserService {
     return user;
   }
 
-  async findMyProfile(userId: string) {
+  async findMyProfile(userId: string): Promise<UserProfileDto> {
     const user = await this.prisma.userEntity.findUnique({
       where: { id: userId },
-      select: this.userPublicFields,
     });
-    return user;
+
+    if (!user) throw new NotFoundException('User not found');
+
+    return {
+      ...user,
+      fullName: user.fullName ?? undefined,
+      firstName: user.firstName ?? undefined,
+      lastName: user.lastName ?? undefined,
+      avatar: user.avatar ?? undefined,
+      city: user.city ?? undefined,
+      postCode: user.postCode ?? undefined,
+      address: user.address ?? undefined,
+      phoneNumber: user.phoneNumber ?? undefined,
+      secondaryPhoneNumber: user.secondaryPhoneNumber ?? undefined,
+    };
   }
 }
